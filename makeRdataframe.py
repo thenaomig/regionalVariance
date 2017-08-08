@@ -1,6 +1,4 @@
 # This script generates all of the files in directory dataframes_R/
-# on the Macintosh, just type: 'python makeRdataframe.py'
-# in the Terminal in this directory
 import numpy as np
 import scipy as sp
 import pandas as pd
@@ -16,7 +14,7 @@ saveRDS = ro.r('saveRDS')
 
 from uncertaintyFunctions import *
 from constants import *
-    
+
 def makeRdataframe(field,region,smoothed):
     '''make and store an R dataframe for just one year at a time
     by looping over year'''
@@ -40,7 +38,7 @@ def makeRdataframe(field,region,smoothed):
 
 if __name__ == "__main__":
     fields = ['tas','pr']
-    regions = ['global','Alaska','BC','pnw','Cali','Baja'] 
+    regions = ['global','Alaska','BC','pnw','Cali','Baja']
     seasons = ['annual','DJF','JJA']
     ensembles = ['','-all+LE','-1run+LE']
     options = defaults(startYear='1950')
@@ -52,7 +50,7 @@ if __name__ == "__main__":
             for justRegion in regions:
                 for season in seasons:
                     options.season=season
-                    regionTag = '-'.join([justRegion,season]) 
+                    regionTag = '-'.join([justRegion,season])
                     regionTag = ''.join([regionTag,ensemble])
                     smoothed = getSmoothed(field,justRegion,options)
                     makeRdataframe(field,regionTag,smoothed)
