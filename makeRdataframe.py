@@ -1,3 +1,4 @@
+# This script generates all of the files in directory dataframes_R/
 # on the Macintosh, just type: 'python makeRdataframe.py'
 # in the Terminal in this directory
 import numpy as np

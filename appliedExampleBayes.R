@@ -19,7 +19,6 @@ for (which.regOnly in c('global','pnw','Alaska','BC','Cali','Baja')) {
   
   which.reg <- paste(which.regOnly,which.season,sep="-") 
   which.reg <- paste(which.reg,which.runs,sep="")
-  which.reg <- paste(which.reg,'-Bayes',sep="")
   
   cat(which.field," ",which.reg,"\n")
   
@@ -34,9 +33,6 @@ for (which.regOnly in c('global','pnw','Alaska','BC','Cali','Baja')) {
     #temp[1:10,]         # look at first 10 rows of data
     
     #----------------------------------------- REML --------------------------------------#
-    
-    fileOut <- paste("../NCresults/NCresults",which.field,which.reg,which.period,sep="_")
-    
     set.seed(200)              
     my.sim.fin.prec <- MCMC.half.Cauchy.finite(temp,A=my.A,n.iter=2500,n.chains=5,n.burnin=500,
                                                n.thin=1,bugs.directory=my.bugs,WINE="/Applications/Wine.app/Contents/Resources/bin/wine", 
@@ -46,6 +42,8 @@ for (which.regOnly in c('global','pnw','Alaska','BC','Cali','Baja')) {
                                        "s_G","s_S","s_GS","s_R")
     output <- print(round(Bayes.prec.res.fin,3)) # summary of the results
     
+    which.regOut <- paste(which.reg,'-Bayes',sep="")
+    fileOut <- paste("../NCresults/NCresults",which.field,which.regOut,which.period,sep="_")
     saveRDS(output, file=fileOut)
         }
       }

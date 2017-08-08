@@ -1,1 +1,4 @@
 *.pyc
+info
+.Rproj.user
+.DS_Store
