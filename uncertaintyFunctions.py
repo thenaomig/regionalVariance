@@ -127,22 +127,22 @@ def readInAllTimeSeries(whichData,directoryData,scenarios,field):
     if('cesmLE' in whichData):
         oneRCPhist = pd.DataFrame()
     else:
-        fileName = ''.join(['timeseriesNew_',field,'_',whichData,'_historical.csv'])
-        fName = ''.join([directoryData,'CMIP5_avg_mine/',fileName])
+        fileName = ''.join(['timeSeries_',field,'_',whichData,'_historical.csv'])
+        fName = ''.join([directoryData,fileName])
         oneRCPhist = pd.read_csv(fName, index_col=0, header=[0,1], parse_dates=True)
         #get the names of the models from the first scenario file in the list:
         models = np.asarray(oneRCPhist.columns) #<- all that just to get the model list, and historical data
 
     def getOneFrame(i):
         if('cesmLE' in whichData):
-            fileName = ''.join(['timeseriesNew_',field,'_',whichData,'_',scenarios[i],'.csv'])
-            fName = ''.join([directoryData,'CMIP5_avg_mine/',fileName])
+            fileName = ''.join(['timeSeries_',field,'_',whichData,'_',scenarios[i],'.csv'])
+            fName = ''.join([directoryData,fileName])
             oneRCP = pd.read_csv(fName, index_col=0, parse_dates=True)
             oneRCP = oneRCP.transpose()
             return oneRCP
         else:
-            fileName = ''.join(['timeseriesNew_',field,'_',whichData,'_',scenarios[i],'.csv'])
-            fName = ''.join([directoryData,'CMIP5_avg_mine/',fileName])
+            fileName = ''.join(['timeSeries_',field,'_',whichData,'_',scenarios[i],'.csv'])
+            fName = ''.join([directoryData,fileName])
             oneRCP = pd.concat([oneRCPhist, pd.read_csv(fName, index_col=0, header=[0,1], parse_dates=True)])
             oneRCP = oneRCP.transpose()
             return oneRCP
