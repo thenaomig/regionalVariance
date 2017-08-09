@@ -1,4 +1,5 @@
 *.pyc
 info
+.ipynb_checkpoints
 .Rproj.user
 .DS_Store
