@@ -1,4 +1,7 @@
 # regionalVariance
+This project is about regional climate uncertainty quantification.
+
+This is the code to accompany Goldenson et al., 2017 (submitted). It takes climate model output (temperature, precipitation, etc.), averages over some geographic region, and quantifies the relative variance in each source of uncertainty about future climate projections.
 
 ### Go directly to <strong>graphVariances.ipynb</strong> to inspect the graphs related to Goldenson et al., 2017 (submitted).
 The examples there generate the plots in the paper and its supplement, along with some additional graphs. They primarily use the functions in <strong>uncertaintyFunctions.py</strong> to process data and make the graphs.
@@ -17,7 +20,7 @@ There are two versions of the script that takes monthly mean climate model outpu
 
 Slight adaptations might be needed for different model output formats.
 
-In case you don’t have all of the raw model output available on your machine, the results of these scripts for the regions in Goldenson et al., 2017 are already in the subdirectories specified in <strong>constants.py</strong>. They are .csv files saved-out using the Python library Pandas.
+In case you don’t have all of the raw model output available on your machine, the results of these scripts for the regions in Goldenson et al., 2017 are already in the subdirectory /timeSeries, as specified in <strong>constants.py</strong>. They are .csv files saved-out using the Python library Pandas.
 
 #### 2. Further process and convert time-series data to R dataframe format and save.
 Now that you have generated and saved regional average time series for the regions you have defined and named, and for the climate variables of choice, you should also create a version of the data that is in the form of a R dataframe because some of the analysis will require the use of R. The script first calculates anomalies against a historical period for annual means, winter, or summer season, and then smooths with a decadal running mean.
