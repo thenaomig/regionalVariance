@@ -20,7 +20,7 @@ There are two versions of the script that takes monthly mean climate model outpu
 
 Slight adaptations might be needed for different model output formats.
 
-In case you don’t have all of the raw model output available on your machine, the results of these scripts for the regions in Goldenson et al., 2017 are already in the subdirectory /timeSeries, as specified in <strong>constants.py</strong>. They are .csv files saved-out using the Python library Pandas.
+In case you don’t have all of the raw model output available on your machine, the results of these scripts for the regions in Goldenson et al., 2017 are already in the subdirectory /timeSeries, as specified in <strong>constants.py</strong>. They are .csv files saved-out using the Python library <a href='http://pandas.pydata.org'>Pandas</a>.
 
 #### 2. Further process and convert time-series data to R dataframe format and save.
 Now that you have generated and saved regional average time series for the regions you have defined and named, and for the climate variables of choice, you should also create a version of the data that is in the form of a R dataframe because some of the analysis will require the use of R. The script first calculates anomalies against a historical period for annual means, winter, or summer season, and then smooths with a decadal running mean.
