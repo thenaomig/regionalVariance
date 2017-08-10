@@ -1,3 +1,5 @@
+#Effectively, this is where all global variables are declared.
+
 import numpy as np
 
 # Global variables for Step 1.
@@ -6,6 +8,13 @@ dataDirCMIP = '/path/to/your/copy/of/CMIP5/monthly/'
 weightPathAndPrefix = '/path/to/your/CMIP5/areacella/areacella_fx_'
 weightSuffix = '_historical_r0i0p0.nc'
 weightFileCESM = '/path/to/any/file/from/CESM/monthly/suchas/b.e11.BRCP45C5CNBDRD.f09_g16.003.cam.h0.TS.200601-208012.nc'
+
+class GeographicBounds(object):
+    def __init__(self, lonMin, lonMax, latMin, latMax):
+        self.lonMin = lonMin
+        self.lonMax = lonMax
+        self.latMin = latMin
+        self.latMax = latMax
 
 regionBounds = {'Alaska':GeographicBounds(193,219,58,71), \
            'Cali':GeographicBounds(236,245,32.5,42), \

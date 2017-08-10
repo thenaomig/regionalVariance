@@ -399,7 +399,7 @@ def getVariancesHandS(region,rcpsIn,options,**kwargs):
     leadTime = np.arange(0,len(allRCPs1950on.index))
     for m in xrange(numModels):
         allVarOfResids.append(getVarOneModel(m))
-    print 'internal variance H&S',options.internal,'method: ', np.mean(allVarOfResids)
+    print 'internal variance H&S',options.internal,'method, N=',len(allRCPs1950on.columns),': ', np.mean(allVarOfResids)
 
     #get the uncertainty due to intermodel variability =============
     byScenario = allRCPs1950on['20000101'::].transpose().groupby(level='scenario')
@@ -585,7 +585,7 @@ def plotColumn(ax,column,field,region,options):
         plotVarianceWithIntervals(ax,column,options,**components)
         options.which='estimate' #<=reset
 
-        print "internal variance CMIP5",options.ensemble,": ", internalComponent.mean(), " range: ", internalLow.mean(), internalHigh.mean()
+        print "internal variance CMIP5",options.ensemble,", N=",len(smoothed.columns),": ", internalComponent.mean(), " range: ", internalLow.mean(), internalHigh.mean()
 
     if options.ylimVariance:
         plt.axes(ax[options.varianceRow,column])
