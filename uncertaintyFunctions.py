@@ -262,7 +262,7 @@ def getSmoothed(field,region,options):
 
 def readNCresults(field,region,smoothed,options):
     '''Read back in the results of running the R scripts
-    from Northrup and Chandler (2014).
+    from Northrop and Chandler (2014).
     ['mu','sigma_G','sigma_S','sigma_GS','sigma_R']'''
     sigmaG = np.zeros(len(years))
     sigmaS = np.zeros(len(years))

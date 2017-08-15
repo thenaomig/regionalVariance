@@ -37,7 +37,7 @@ You must obtain the code from Paul Northrop that accompanies Northrop and Chandl
 
 Place it in the main project directory and unzip to create a sub-directory. Copy or move appliedExample.R, and appliedExampleBayes.R into that subdirectory.   
 
-<strong>appliedExample.R</strong> is the one that is run to get the results in Goldenson et al., 2017. You may want to also examine Northrup and Chandler's exampleCode.R on which it is based, and their README.pdf
+<strong>appliedExample.R</strong> is the one that is run to get the results in Goldenson et al., 2017. You may want to also examine Northrop and Chandler's exampleCode.R on which it is based, and their README.pdf
 
 - edit appliedExample.R to loop over the climate variables, regions, and other variants that you prefer.
 - edit the lines to set the working directory and other directory paths
