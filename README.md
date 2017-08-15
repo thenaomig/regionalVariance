@@ -33,7 +33,7 @@ You may first want to edit it to loop over the region names that you have define
 #### 3. run R script
 I recommend <a href='https://www.rstudio.com/products/rstudio/#Desktop'>R Studio</a> if you are using a Macintosh.
 
-You must obtain the code from Paul Northrup that accompanies Northrup and Chandler (2014) at:  http://www.homepages.ucl.ac.uk/~ucakpjn/SOFTWARE/NorthropChandler2014.zip
+You must obtain the code from Paul Northrop that accompanies Northrop and Chandler (2014) at:  http://www.homepages.ucl.ac.uk/~ucakpjn/SOFTWARE/NorthropChandler2014.zip
 
 Place it in the main project directory and unzip to create a sub-directory. Copy or move appliedExample.R, and appliedExampleBayes.R into that subdirectory.   
 
