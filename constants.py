@@ -3,11 +3,13 @@
 import numpy as np
 
 # Global variables for Step 1.
-dataDirCESM = '/directory/path/to/your/copy/of/cesmLE/monthly/'
-dataDirCMIP = '/path/to/your/copy/of/CMIP5/monthly/'
-weightPathAndPrefix = '/path/to/your/CMIP5/areacella/areacella_fx_'
+dataDirCESM = '/directory/path/to/monthly/data/'
+dataDirCMIP = '/directory/path/for/CMIP/'
+weightPathAndPrefix = '/directory/path/to/CMIP5/areacella/areacella_fx_'
 weightSuffix = '_historical_r0i0p0.nc'
-weightFileCESM = '/path/to/any/file/from/CESM/monthly/suchas/b.e11.BRCP45C5CNBDRD.f09_g16.003.cam.h0.TS.200601-208012.nc'
+landFracPath = '/directory/path/to/landFrac/sftlf/'
+weightFileCESM = '/any/path/to/file/like/rcp85/monthly/TS/b.e11.BRCP85C5CNBDRD.f09_g16.008.cam.h0.TS.208101-210012.nc'
+landFracCESM = '/directory/path/to/CESM/LANDFRAC/'
 
 class GeographicBounds(object):
     def __init__(self, lonMin, lonMax, latMin, latMax):
