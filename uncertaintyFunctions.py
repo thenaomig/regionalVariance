@@ -102,9 +102,10 @@ class defaults(object):
     nRows = attr.ib(default=2,validator=nRowChoices)
     varianceRow = attr.ib(default=0)
     season = attr.ib(default='annual',convert=str,validator=seasonChoices)
+    landOnly = attr.ib(default='')
     ensemble = attr.ib(attr.Factory(str),validator=consistentFlags)
     append = attr.ib(default='',convert=str)
-    startYear = attr.ib(default='2000',convert=str)
+    startYear = attr.ib(default='2006',convert=str)
     oneCMIPrun = attr.ib(attr.Factory(bool))
     justCMIP = attr.ib(attr.Factory(bool))
     confidenceIntervals = attr.ib(default=False)
@@ -121,13 +122,13 @@ class defaults(object):
     internal = attr.ib(default='smoothed',validator=isHandSoption)
 
 #----------------------------------------------------------------
-def readInAllTimeSeries(whichData,directoryData,scenarios,field):
+def readInAllTimeSeries(whichData,directoryData,scenarios,field,options):
     numScenarios = len(scenarios)
 
     if('cesmLE' in whichData):
         oneRCPhist = pd.DataFrame()
     else:
-        fileName = ''.join(['timeSeries_',field,'_',whichData,'_historical.csv'])
+        fileName = ''.join(['timeSeries',options.landOnly,'_',field,'_',whichData,'_historical.csv'])
         fName = ''.join([directoryData,fileName])
         oneRCPhist = pd.read_csv(fName, index_col=0, header=[0,1], parse_dates=True)
         #get the names of the models from the first scenario file in the list:
@@ -135,13 +136,13 @@ def readInAllTimeSeries(whichData,directoryData,scenarios,field):
 
     def getOneFrame(i):
         if('cesmLE' in whichData):
-            fileName = ''.join(['timeSeries_',field,'_',whichData,'_',scenarios[i],'.csv'])
+            fileName = ''.join(['timeSeries',options.landOnly,'_',field,'_',whichData,'_',scenarios[i],'.csv'])
             fName = ''.join([directoryData,fileName])
             oneRCP = pd.read_csv(fName, index_col=0, parse_dates=True)
             oneRCP = oneRCP.transpose()
             return oneRCP
         else:
-            fileName = ''.join(['timeSeries_',field,'_',whichData,'_',scenarios[i],'.csv'])
+            fileName = ''.join(['timeSeries',options.landOnly,'_',field,'_',whichData,'_',scenarios[i],'.csv'])
             fName = ''.join([directoryData,fileName])
             oneRCP = pd.concat([oneRCPhist, pd.read_csv(fName, index_col=0, header=[0,1], parse_dates=True)])
             oneRCP = oneRCP.transpose()
@@ -182,8 +183,8 @@ def readInCMIPandLE(field,region,options):
     whichData = region+'_Monthly'
     whichDataLE = whichData+'_cesmLE'
 
-    allRCPs = readInAllTimeSeries(whichData,directoryCMIP,scenarios,field)
-    cesmLE = readInAllTimeSeries(whichDataLE,directoryLE,scenariosLE,fieldLE)
+    allRCPs = readInAllTimeSeries(whichData,directoryCMIP,scenarios,field,options)
+    cesmLE = readInAllTimeSeries(whichDataLE,directoryLE,scenariosLE,fieldLE,options)
     cesmLE.columns = cesmLE.columns.set_names(['scenario', 'run'])
 
     if options.season == 'annual':
@@ -247,6 +248,7 @@ def readInCMIPandLE(field,region,options):
 def getAnomaly(field,region,options):
     allRCPsPlus = readInCMIPandLE(field,region,options)
     anom = deepcopy(allRCPsPlus)
+    
     for scenario in scenarios: #subtract the right historical average, across all runs of that model/scenario
         anom[scenario] = allRCPsPlus[scenario].transpose().groupby('model').apply(subtractTemp).transpose()
 
@@ -297,23 +299,23 @@ def readNCresults(field,region,smoothed,options):
 
     if options.smooth:
         fracForSmoothing = options.smooth
-        leadTime = pd.DataFrame(np.arange(0,len(years)),index=smoothed['2005':'2095'].index)
+        leadTime = pd.DataFrame(np.arange(0,len(years)),index=smoothed['2011':'2095'].index)
         leadTime.columns = ['time']
         sigmaG = sm.nonparametric.lowess(sigmaG,np.array(leadTime.transpose()).astype('timedelta64[Y]')[0],frac=fracForSmoothing,it=0,return_sorted=False)
         sigmaS = sm.nonparametric.lowess(sigmaS,np.array(leadTime.transpose()).astype('timedelta64[Y]')[0],frac=fracForSmoothing,it=0,return_sorted=False)
         sigmaGS = sm.nonparametric.lowess(sigmaGS,np.array(leadTime.transpose()).astype('timedelta64[Y]')[0],frac=fracForSmoothing,it=0,return_sorted=False)
         sigmaR = sm.nonparametric.lowess(sigmaR,np.array(leadTime.transpose()).astype('timedelta64[Y]')[0],frac=fracForSmoothing,it=0,return_sorted=False)
 
-    modelComponent = pd.Series(sigmaG,index=smoothed['2005':'2095'].index)
-    scenarioComponent = pd.Series(sigmaS,index=smoothed['2005':'2095'].index)
-    interactionComponent = pd.Series(sigmaGS,index=smoothed['2005':'2095'].index)
-    internalComponent = pd.Series(sigmaR,index=smoothed['2005':'2095'].index)
+    modelComponent = pd.Series(sigmaG,index=smoothed['2011':'2095'].index)
+    scenarioComponent = pd.Series(sigmaS,index=smoothed['2011':'2095'].index)
+    interactionComponent = pd.Series(sigmaGS,index=smoothed['2011':'2095'].index)
+    internalComponent = pd.Series(sigmaR,index=smoothed['2011':'2095'].index)
 
     return modelComponent, scenarioComponent, interactionComponent, internalComponent
 
 def getVariancesHandS(region,rcpsIn,options,**kwargs):
     '''This is the function that emulates the method of Hawkins and Sutton (2009).
-    Returns three components of uncertainty a function of time, and the highly
+    Returns three components of uncertainty as a function of time, and the highly
     smoothed time series that went into the calculation.
     Parameters specific to this function that can be specified in options include
     'modelsToKeep','scenariosToDrop',and 'internal' to specify the smoothing method.'''
@@ -380,7 +382,7 @@ def getVariancesHandS(region,rcpsIn,options,**kwargs):
         results.summary()
         #alt thing:
         if options.internal=='smoothed':
-            lowessSmoothedMore = sm.nonparametric.lowess(np.asarray(y),leadTime,frac=0.5,it=0,return_sorted=False)
+            lowessSmoothedMore = sm.nonparametric.lowess(np.asarray(y),leadTime,frac=0.4,it=0,return_sorted=False)
             allRCPs1950on.loc[y.index,(scenario,model)] = lowessSmoothedMore
             residual = np.asarray(y - lowessSmoothedMore)
         else:
@@ -418,12 +420,7 @@ def getVariancesHandS(region,rcpsIn,options,**kwargs):
 def plotTrends(ax,column,smoothed,options,**kwargs):
     plt.axes(ax[0,column])
 
-    leadTime = pd.DataFrame(np.arange(0,100)) #- pd.Timedelta(weeks=208) + pd.Timedelta(weeks=260)
-    leadTime.index = smoothed.index
-    leadTime.columns = ['time']
-
-    leadTime = leadTime['20050101':'20950101']
-    smoothed = smoothed['20050101':'20950101']
+    smoothed = smoothed['20110101':'20950101']
 
     byScenario = smoothed.transpose().groupby(level='scenario')
     mean_field = byScenario.mean().transpose()
@@ -433,17 +430,18 @@ def plotTrends(ax,column,smoothed,options,**kwargs):
     if not options.spaghetti:
         mstd = byScenario.std().transpose()
         for i, scenario in enumerate(options.scenarios):
-            plt.plot(leadTime['time'],mean_field[scenario],color=colorList[i],linewidth=2)
-            plt.fill_between(leadTime['time'],mean_field[scenario]-mstd[scenario],mean_field[scenario]+mstd[scenario],facecolor=colorList[i],alpha=0.2)
+            mean_field[scenario].plot(color=colorList[i],linewidth=2)
+            plt.fill_between(mean_field.index,mean_field[scenario]-mstd[scenario],mean_field[scenario]+mstd[scenario],facecolor=colorList[i],alpha=0.2)
     else:
         for i,scenario in enumerate(options.scenarios):
-            plt.plot(leadTime['time'],mean_field[scenario],color=colorList[i],linewidth=2)
             for j in smoothed[scenario].columns:
-                plt.plot(leadTime['time'],smoothed[scenario][j],'--',color=colorList[i],linewidth=0.5)
+                smoothed[scenario][j].plot(color=colorList[i],linewidth=0.5)
 
     forLegend = byScenario.groups.keys()
     plt.tick_params(labelsize=options.tick_label_size)
     plt.tick_params(axis='x',label1On=False)
+    plt.xlim(['2006','2099'])
+    plt.xlabel('')
     if(column==0):
         plt.ylabel('Multi-model means')
     else:
@@ -451,34 +449,31 @@ def plotTrends(ax,column,smoothed,options,**kwargs):
 
 def plotVariance(ax,column,options,**kwargs):
     smoothed = kwargs['smoothed']
-    leadTime = pd.DataFrame(np.arange(0,100))
-    leadTime.index = smoothed.index
-    leadTime.columns = ['time']
+    smoothed = smoothed['20110101':'20950101']
 
-    leadTime = leadTime['20050101':'20950101']
-    smoothed = smoothed['20050101':'20950101']
-
-    modelComponent = kwargs['modelComponent']['20050101':'20950101']
-    scenarioComponent = kwargs['scenarioComponent']['20050101':'20950101']
-    internalComponent = kwargs['internalComponent']['20050101':'20950101']
+    modelComponent = kwargs['modelComponent']['20110101':'20950101']
+    scenarioComponent = kwargs['scenarioComponent']['20110101':'20950101']
+    internalComponent = kwargs['internalComponent']['20110101':'20950101']
 
     #total variance
     plt.axes(ax[options.varianceRow,column])
-    plt.plot(leadTime, modelComponent, 'b',linewidth=2)
-    plt.plot(leadTime, scenarioComponent, 'g',linewidth=2)
-    plt.plot(leadTime, internalComponent, 'orange',linewidth=2)
+    modelComponent.plot(color='b',linewidth=2)
+    scenarioComponent.plot(color='g',linewidth=2)
+    internalComponent.plot(color='orange',linewidth=2)
 
     if 'interactionComponent' in kwargs:
-        interactionComponent = kwargs['interactionComponent']['20050101':'20950101']
+        interactionComponent = kwargs['interactionComponent']['20110101':'20950101']
         totalVariance = internalComponent + modelComponent + scenarioComponent + interactionComponent
-        plt.plot(leadTime, interactionComponent, 'c', linewidth=2)
+        interactionComponent.plot(color='c', linewidth=2)
     else:
         totalVariance = internalComponent + modelComponent + scenarioComponent
 
-    plt.plot(leadTime, totalVariance,'k',linewidth=2)
+    totalVariance.plot(color='k',linewidth=2)
+    plt.xlim(['2006', '2099'])
     plt.tick_params(labelsize=options.tick_label_size)
-    plt.xlim([0, 100])
+    plt.xticks(['2010','2030','2050','2070','2090'])
     plt.tick_params(labelbottom='off')
+    plt.xlabel('')
     if(column == 0):
         plt.ylabel('Variance')
     else:
@@ -501,18 +496,21 @@ def plotVariance(ax,column,options,**kwargs):
 
     #fractional variance: H&S order
     plt.axes(ax[options.varianceRow+1,column])
-    plt.fill_between(leadTime['time'],fracModel+fracScenario+fracInteraction,onesLine,facecolor='orange')
-    plt.fill_between(leadTime['time'],fracModel+fracInteraction,fracModel+fracInteraction+fracScenario,facecolor='green')
-    plt.fill_between(leadTime['time'],fracModel,fracModel+fracInteraction,facecolor='cyan')
-    plt.fill_between(leadTime['time'],zeroLine,fracModel,facecolor='blue')
+    xDim = pd.Series(np.arange(2011,2096)) 
+    plt.fill_between(xDim,fracModel+fracScenario+fracInteraction,onesLine,facecolor='orange')
+    plt.fill_between(xDim,fracModel+fracInteraction,fracModel+fracInteraction+fracScenario,facecolor='green')
+    plt.fill_between(xDim,fracModel,fracModel+fracInteraction,facecolor='cyan')
+    plt.fill_between(xDim,zeroLine,fracModel,facecolor='blue')
 
-    plt.xlim([0, 100])
+    plt.xlim([2006, 2099])
     if(column == 0):
         plt.ylabel('Fraction of Variance')
     else:
         plt.tick_params(labelleft='off')
     plt.yticks(np.arange(10)/10.0 + 0.1)
     plt.tick_params(labelsize=options.tick_label_size)
+    plt.tick_params(axis='x',direction='inout')
+    plt.xticks([2010,2030,2050,2070,2090],rotation=25)
 
 def plotVarianceWithIntervals(ax,column,options,**kwargs):
     '''These are optionally plotted on top of already-plotted best estimates, if
@@ -521,34 +519,31 @@ def plotVarianceWithIntervals(ax,column,options,**kwargs):
     because the confidence intervals are only produced by the method that also
     has an interaction term.'''
     smoothed = kwargs['smoothed']
-    leadTime = pd.DataFrame(np.arange(0,100))
-    leadTime.index = smoothed.index
-    leadTime.columns = ['time']
 
-    leadTime = leadTime['20050101':'20950101']
+    internalLow = kwargs['internalLow']['20110101':'20950101']
+    modelLow = kwargs['modelLow']['20110101':'20950101']
+    scenarioLow = kwargs['scenarioLow']['20110101':'20950101']
+    interactionLow = kwargs['interactionLow']['20110101':'20950101']
 
-    internalLow = kwargs['internalLow']['20050101':'20950101']
-    modelLow = kwargs['modelLow']['20050101':'20950101']
-    scenarioLow = kwargs['scenarioLow']['20050101':'20950101']
-    interactionLow = kwargs['interactionLow']['20050101':'20950101']
-
-    internalHigh = kwargs['internalHigh']['20050101':'20950101']
-    modelHigh = kwargs['modelHigh']['20050101':'20950101']
-    scenarioHigh = kwargs['scenarioHigh']['20050101':'20950101']
-    interactionHigh = kwargs['interactionHigh']['20050101':'20950101']
+    internalHigh = kwargs['internalHigh']['20110101':'20950101']
+    modelHigh = kwargs['modelHigh']['20110101':'20950101']
+    scenarioHigh = kwargs['scenarioHigh']['20110101':'20950101']
+    interactionHigh = kwargs['interactionHigh']['20110101':'20950101']
 
     plt.axes(ax[options.varianceRow,column])
     plt.tick_params(labelsize=options.tick_label_size)
-    plt.xlim([0, 100])
 
-    plt.plot(leadTime,modelLow,'b')
-    plt.plot(leadTime,modelHigh,'b')
-    plt.plot(leadTime,scenarioLow,'g')
-    plt.plot(leadTime,scenarioHigh,'g')
-    plt.plot(leadTime,internalLow,'orange')
-    plt.plot(leadTime,internalHigh,'orange')
-    plt.plot(leadTime,interactionLow,'c')
-    plt.plot(leadTime,interactionHigh,'c')
+    modelLow.plot(color='b')
+    modelHigh.plot(color='b')
+    scenarioLow.plot(color='g')
+    scenarioHigh.plot(color='g')
+    internalLow.plot(color='orange')
+    internalHigh.plot(color='orange')
+    interactionLow.plot(color='c')
+    interactionHigh.plot(color='c')
+
+    plt.xlim(['2006', '2099'])
+    plt.xlabel('')
 
 def plotColumn(ax,column,field,region,options):
     if options.HandS:
@@ -560,6 +555,8 @@ def plotColumn(ax,column,field,region,options):
         smoothed = getSmoothed(field,region,options)
         regionTag = '-'.join([region,options.season])
         regionTag = ''.join([regionTag,options.ensemble,options.append])
+        if options.landOnly=='LO':
+            regionTag = '-'.join([regionTag,options.landOnly])
         modelComponent, scenarioComponent, interactionComponent, internalComponent = readNCresults(field,regionTag,smoothed,options)
         components = {'modelComponent':modelComponent,'scenarioComponent':scenarioComponent,
                      'interactionComponent':interactionComponent,'internalComponent':internalComponent,
@@ -586,6 +583,8 @@ def plotColumn(ax,column,field,region,options):
         options.which='estimate' #<=reset
 
         print "internal variance CMIP5",options.ensemble,", N=",len(smoothed.columns),": ", internalComponent.mean(), " range: ", internalLow.mean(), internalHigh.mean()
+    #else:
+    #    print "internal variance CMIP5",options.ensemble,", N=",len(smoothed.columns),": ", internalComponent.mean()
 
     if options.ylimVariance:
         plt.axes(ax[options.varianceRow,column])

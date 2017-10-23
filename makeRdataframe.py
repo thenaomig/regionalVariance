@@ -39,9 +39,10 @@ def makeRdataframe(field,region,smoothed):
 if __name__ == "__main__":
     fields = ['tas','pr']
     regions = ['global','Alaska','BC','pnw','Cali','Baja']
+    #regions = ['Australia','eqAfrica','Europe','centralAsia','NewEngland','caribbean','Ecuador','amazon','inlandSmall']
     seasons = ['annual','DJF','JJA']
     ensembles = ['','-all+LE','-1run+LE']
-    options = defaults(startYear='1950')
+    options = defaults(startYear=1950) #,landOnly='LO')
 
     for ensemble in ensembles:
         options.ensemble = ensemble
@@ -52,5 +53,7 @@ if __name__ == "__main__":
                     options.season=season
                     regionTag = '-'.join([justRegion,season])
                     regionTag = ''.join([regionTag,ensemble])
+                    if options.landOnly=='LO':
+                        regionTag = '-'.join([regionTag,options.landOnly])
                     smoothed = getSmoothed(field,justRegion,options)
                     makeRdataframe(field,regionTag,smoothed)
