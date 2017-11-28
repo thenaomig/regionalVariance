@@ -27,7 +27,7 @@ def allStartJanuary(allRCPs):
 
 def getFieldLE(field):
     if field == 'tas':
-        fieldLE = 'TS'
+        fieldLE = 'TREFHT'
     elif field == 'pr':
         fieldLE = 'PRECT'
     return fieldLE
@@ -248,7 +248,7 @@ def readInCMIPandLE(field,region,options):
 def getAnomaly(field,region,options):
     allRCPsPlus = readInCMIPandLE(field,region,options)
     anom = deepcopy(allRCPsPlus)
-    
+
     for scenario in scenarios: #subtract the right historical average, across all runs of that model/scenario
         anom[scenario] = allRCPsPlus[scenario].transpose().groupby('model').apply(subtractTemp).transpose()
 
@@ -496,7 +496,7 @@ def plotVariance(ax,column,options,**kwargs):
 
     #fractional variance: H&S order
     plt.axes(ax[options.varianceRow+1,column])
-    xDim = pd.Series(np.arange(2011,2096)) 
+    xDim = pd.Series(np.arange(2011,2096))
     plt.fill_between(xDim,fracModel+fracScenario+fracInteraction,onesLine,facecolor='orange')
     plt.fill_between(xDim,fracModel+fracInteraction,fracModel+fracInteraction+fracScenario,facecolor='green')
     plt.fill_between(xDim,fracModel,fracModel+fracInteraction,facecolor='cyan')

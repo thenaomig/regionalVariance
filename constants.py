@@ -8,7 +8,7 @@ dataDirCMIP = '/directory/path/for/CMIP/'
 weightPathAndPrefix = '/directory/path/to/CMIP5/areacella/areacella_fx_'
 weightSuffix = '_historical_r0i0p0.nc'
 landFracPath = '/directory/path/to/landFrac/sftlf/'
-weightFileCESM = '/any/path/to/file/like/rcp85/monthly/TS/b.e11.BRCP85C5CNBDRD.f09_g16.008.cam.h0.TS.208101-210012.nc'
+weightFileCESM = '/any/path/to/file/like/rcp85/monthly/TREFHT/b.e11.BRCP85C5CNBDRD.f09_g16.008.cam.h0.TS.208101-210012.nc'
 landFracCESM = '/directory/path/to/CESM/LANDFRAC/'
 
 class GeographicBounds(object):
