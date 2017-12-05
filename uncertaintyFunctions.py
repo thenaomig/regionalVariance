@@ -209,9 +209,9 @@ def readInCMIPandLE(field,region,options):
     cesmLE.index = cesmLE.index.to_period(freq='A')
 
     if options.oneCMIPrun:
-        allRCPs = allRCPs.swaplevel(0,2,axis=1)
-        allRCPs = allRCPs['run1'] #drop everything other than one of the runs
-        allRCPs = allRCPs.swaplevel(0,1,axis=1)
+        # keep just one run per model/scenario pair:
+        allRCPs.columns = allRCPs.columns.droplevel(2)
+        allRCPs = allRCPs.loc[:,~allRCPs.columns.duplicated()]
         if options.justCMIP:
             return allRCPs
         #but keep the 'run' level in the column headers:
@@ -583,8 +583,8 @@ def plotColumn(ax,column,field,region,options):
         options.which='estimate' #<=reset
 
         print "internal variance CMIP5",options.ensemble,", N=",len(smoothed.columns),": ", internalComponent.mean(), " range: ", internalLow.mean(), internalHigh.mean()
-    #else:
-    #    print "internal variance CMIP5",options.ensemble,", N=",len(smoothed.columns),": ", internalComponent.mean()
+    else:
+        print "internal variance CMIP5",options.ensemble,", N=",len(smoothed.columns),": ", internalComponent.mean()
 
     if options.ylimVariance:
         plt.axes(ax[options.varianceRow,column])
