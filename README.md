@@ -1,7 +1,7 @@
 # regionalVariance
 This project is about regional climate uncertainty quantification.
 
-This is the code to accompany Goldenson et al., 2017 (submitted). It takes climate model output (temperature, precipitation, etc.), averages over some geographic region, and quantifies the relative variance in each source of uncertainty about future climate projections.
+This is the code to accompany <A href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2017GL076297">Goldenson et al. (2018)</A>. It takes climate model output (temperature, precipitation, etc.), averages over some geographic region, and quantifies the relative variance in each source of uncertainty about future climate projections.
 
 ### Go directly to <strong>graphVariances.ipynb</strong> to inspect the graphs related to Goldenson et al., 2017 (submitted).
 The examples there generate the plots in the paper and its supplement, along with some additional graphs. They primarily use the functions in <strong>uncertaintyFunctions.py</strong> to process data and make the graphs.
