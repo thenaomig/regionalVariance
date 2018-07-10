@@ -3,7 +3,7 @@ This project is about regional climate uncertainty quantification.
 
 This is the code to accompany <A href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2017GL076297">Goldenson et al. (2018)</A>. It takes climate model output (temperature, precipitation, etc.), averages over some geographic region, and quantifies the relative variance in each source of uncertainty about future climate projections.
 
-### Go directly to <strong>graphVariances.ipynb</strong> to inspect the graphs related to Goldenson et al., 2017 (submitted).
+### Go directly to <strong>graphVariances.ipynb</strong> to inspect the graphs related to Goldenson et al., 2018.
 The examples there generate the plots in the paper and its supplement, along with some additional graphs. They primarily use the functions in <strong>uncertaintyFunctions.py</strong> to process data and make the graphs.
 
 The sample data in the project should allow the notebook to run as is. If you'd like to reproduce it, or define your own regions or climate variables...
@@ -37,7 +37,7 @@ You must obtain the code from Paul Northrop that accompanies Northrop and Chandl
 
 Place it in the main project directory and unzip to create a sub-directory. Copy or move appliedExample.R, and appliedExampleBayes.R into that subdirectory.   
 
-<strong>appliedExample.R</strong> is the one that is run to get the results in Goldenson et al., 2017. You may want to also examine Northrop and Chandler's exampleCode.R on which it is based, and their README.pdf
+<strong>appliedExample.R</strong> is the one that is run to get the results in Goldenson et al., 2018. You may want to also examine Northrop and Chandler's exampleCode.R on which it is based, and their README.pdf
 
 - edit appliedExample.R to loop over the climate variables, regions, and other variants that you prefer.
 - edit the lines to set the working directory and other directory paths
